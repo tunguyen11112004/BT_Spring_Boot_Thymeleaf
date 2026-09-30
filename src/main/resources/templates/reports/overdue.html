@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Báo cáo quá hạn')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-1">Báo cáo quá hạn</h1>
+    <p class="text-muted">Tính đến <span th:text="${#temporals.format(today, 'dd/MM/yyyy')}"></span>. Phí dự kiến là phí phát sinh thêm nếu trả nốt phần còn lại trong hôm nay.</p>
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>Độc giả</th>
+                    <th>Sách</th>
+                    <th>Hạn trả</th>
+                    <th>Số ngày trễ</th>
+                    <th>Ngày tính phí</th>
+                    <th>Còn mượn</th>
+                    <th>Phí dự kiến</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(rows)}">
+                    <td colspan="8" class="text-center text-muted py-4">Không có phiếu quá hạn.</td>
+                </tr>
+                <tr th:each="row : ${rows}">
+                    <td th:text="${row.memberCode + ' - ' + row.memberName}"></td>
+                    <td th:text="${row.bookTitle}"></td>
+                    <td th:text="${#temporals.format(row.dueDate, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${row.lateDays}"></td>
+                    <td th:text="${row.billableLateDays}"></td>
+                    <td th:text="${row.remainingQuantity}"></td>
+                    <td th:text="${#numbers.formatDecimal(row.expectedFine, 1, 'POINT', 0, 'COMMA')} + ' đ'"></td>
+                    <td><a th:href="@{/borrowings/{id}(id=${row.borrowingId})}">Phiếu</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title=${memberId} == null ? 'Thêm độc giả' : 'Sửa độc giả')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3" th:text="${memberId} == null ? 'Thêm độc giả' : 'Sửa độc giả'">Độc giả</h1>
+    <div class="card">
+        <div class="card-body">
+            <form th:object="${form}" method="post"
+                  th:action="${memberId} == null ? @{/members} : @{/members/{id}(id=${memberId})}">
+                <div class="mb-3">
+                    <label class="form-label">Mã độc giả</label>
+                    <input class="form-control" th:field="*{memberCode}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('memberCode')}" th:errors="*{memberCode}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Họ tên</label>
+                    <input class="form-control" th:field="*{fullName}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input class="form-control" th:field="*{email}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Điện thoại</label>
+                    <input class="form-control" th:field="*{phone}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                </div>
+                <button class="btn btn-primary" type="submit">Lưu</button>
+                <a class="btn btn-link" th:href="@{/members}">Quay lại</a>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

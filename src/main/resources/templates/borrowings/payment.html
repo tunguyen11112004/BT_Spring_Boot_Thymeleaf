@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Thanh toán phí')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3">Thanh toán phí phiếu #<span th:text="${borrowing.id}">1</span></h1>
+    <p>Còn phải thu: <strong th:text="${#numbers.formatDecimal(borrowing.unpaidFineAmount, 1, 'POINT', 0, 'COMMA')} + ' đ'"></strong></p>
+    <div class="card" th:if="${borrowing.canPay()}">
+        <div class="card-body">
+            <form th:object="${form}" method="post" th:action="@{/borrowings/{id}/payments(id=${borrowing.id})}">
+                <div class="mb-3">
+                    <label class="form-label">Số tiền</label>
+                    <input class="form-control" type="number" min="0.01" step="0.01" th:field="*{amount}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Phương thức</label>
+                    <select class="form-select" th:field="*{method}">
+                        <option value="">-- Chọn --</option>
+                        <option th:each="item : ${paymentMethods}" th:value="${item}" th:text="${@labels.method(item)}"></option>
+                    </select>
+                    <div class="text-danger small" th:if="${#fields.hasErrors('method')}" th:errors="*{method}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Ghi chú</label>
+                    <textarea class="form-control" th:field="*{note}"></textarea>
+                    <div class="text-danger small" th:if="${#fields.hasErrors('note')}" th:errors="*{note}"></div>
+                </div>
+                <button class="btn btn-primary" type="submit">Ghi nhận</button>
+                <a class="btn btn-link" th:href="@{/borrowings/{id}(id=${borrowing.id})}">Quay lại</a>
+            </form>
+        </div>
+    </div>
+    <div th:unless="${borrowing.canPay()}" class="alert alert-secondary">Phiếu này không còn phí phải thu.</div>
+</main>
+</body>
+</html>

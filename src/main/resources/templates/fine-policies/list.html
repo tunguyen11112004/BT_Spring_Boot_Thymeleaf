@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Chính sách phí phạt')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3">Chính sách phí phạt</h1>
+    <p class="text-muted">Chỉ một chính sách được áp dụng. Tạo mới sẽ tắt chính sách đang active.</p>
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:object="${form}" method="post" th:action="@{/fine-policies}" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Phí mỗi ngày (đ)</label>
+                    <input class="form-control" type="number" min="0.01" step="0.01" th:field="*{dailyFineAmount}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('dailyFineAmount')}" th:errors="*{dailyFineAmount}"></div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Ngày miễn phạt</label>
+                    <input class="form-control" type="number" min="0" th:field="*{graceDays}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('graceDays')}" th:errors="*{graceDays}"></div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Trần phí / dòng</label>
+                    <input class="form-control" type="number" min="0" step="0.01" th:field="*{maxFineAmount}" placeholder="Để trống nếu không trần">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('maxFineAmount')}" th:errors="*{maxFineAmount}"></div>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary" type="submit">Áp dụng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>Phí/ngày</th>
+                    <th>Ngày miễn</th>
+                    <th>Trần/dòng</th>
+                    <th>Trạng thái</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="policy : ${policies}">
+                    <td th:text="${#numbers.formatDecimal(policy.dailyFineAmount, 1, 'POINT', 0, 'COMMA')} + ' đ'"></td>
+                    <td th:text="${policy.graceDays}"></td>
+                    <td>
+                        <span th:if="${policy.maxFineAmount == null}">Không trần</span>
+                        <span th:if="${policy.maxFineAmount != null}"
+                              th:text="${#numbers.formatDecimal(policy.maxFineAmount, 1, 'POINT', 0, 'COMMA')} + ' đ'"></span>
+                    </td>
+                    <td>
+                        <span class="badge" th:classappend="${policy.active} ? 'text-bg-success' : 'text-bg-secondary'"
+                              th:text="${policy.active} ? 'Đang dùng' : 'Ngừng'"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Trả sách')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3">Trả sách phiếu #<span th:text="${borrowing.id}">1</span></h1>
+    <p class="text-muted">Bấm "Xem phí" để tính phí trước khi xác nhận. Phí chỉ tính trên số lượng trả trong lần này.</p>
+    <form th:object="${form}" method="post" th:action="@{/borrowings/{id}/return(id=${borrowing.id})}"
+          th:if="${borrowing.canReturn()}">
+        <div class="card mb-3">
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Sách</th>
+                        <th>Còn đang mượn</th>
+                        <th>Số lượng trả</th>
+                        <th>Phí nếu trả hết hôm nay</th>
+                        <th>Phí theo số lượng vừa nhập</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="detail, stat : ${borrowing.details}">
+                        <td>
+                            <span th:text="${detail.book.title}">Sách</span>
+                            <input type="hidden" th:field="*{lines[__${stat.index}__].detailId}">
+                        </td>
+                        <td th:text="${detail.remaining()}">0</td>
+                        <td style="max-width: 140px;">
+                            <input class="form-control" type="number" min="0" th:max="${detail.remaining()}"
+                                   th:field="*{lines[__${stat.index}__].quantity}"
+                                   th:disabled="${detail.remaining() == 0}">
+                        </td>
+                        <td>
+                            <span th:if="${estimates.containsKey(detail.id)}"
+                                  th:text="${#numbers.formatDecimal(estimates.get(detail.id).addedFine, 1, 'POINT', 0, 'COMMA')} + ' đ'"></span>
+                            <span th:unless="${estimates.containsKey(detail.id)}">—</span>
+                        </td>
+                        <td>
+                            <span th:if="${previewByDetail != null and previewByDetail.containsKey(detail.id)}"
+                                  th:text="${#numbers.formatDecimal(previewByDetail.get(detail.id).addedFine, 1, 'POINT', 0, 'COMMA')} + ' đ'">0</span>
+                            <span th:unless="${previewByDetail != null and previewByDetail.containsKey(detail.id)}">—</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <button class="btn btn-outline-primary" type="submit" name="action" value="preview">Xem phí</button>
+        <button class="btn btn-primary" type="submit" name="action" value="confirm">Xác nhận trả</button>
+        <a class="btn btn-link" th:href="@{/borrowings/{id}(id=${borrowing.id})}">Quay lại</a>
+    </form>
+    <div th:unless="${borrowing.canReturn()}" class="alert alert-secondary">Phiếu này không còn sách để trả.</div>
+</main>
+</body>
+</html>

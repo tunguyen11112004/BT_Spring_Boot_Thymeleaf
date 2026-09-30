@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Tạo phiếu mượn')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3">Tạo phiếu mượn</h1>
+    <p class="text-muted">Mỗi độc giả tối đa 5 cuốn chưa trả. Không tạo phiếu mới nếu đang quá hạn hoặc còn nợ phí.</p>
+    <form th:object="${form}" method="post" th:action="@{/borrowings}">
+        <div class="card mb-3">
+            <div class="card-body row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Độc giả</label>
+                    <select class="form-select" th:field="*{memberId}">
+                        <option value="">-- Chọn độc giả --</option>
+                        <option th:each="member : ${members}" th:value="${member.id}"
+                                th:text="${member.memberCode + ' - ' + member.fullName}"></option>
+                    </select>
+                    <div class="text-danger small" th:if="${#fields.hasErrors('memberId')}" th:errors="*{memberId}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Ngày mượn</label>
+                    <input class="form-control" type="date" th:field="*{borrowedDate}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('borrowedDate')}" th:errors="*{borrowedDate}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Hạn trả</label>
+                    <input class="form-control" type="date" th:field="*{dueDate}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('dueDate')}" th:errors="*{dueDate}"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Sách</th>
+                        <th>Còn lại</th>
+                        <th>Số lượng mượn</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="book, stat : ${books}">
+                        <td>
+                            <span th:text="${book.title}">Sách</span>
+                            <div class="small text-muted" th:text="${book.author}"></div>
+                            <input type="hidden" th:field="*{lines[__${stat.index}__].bookId}">
+                        </td>
+                        <td th:text="${book.availableQuantity}">0</td>
+                        <td style="max-width: 140px;">
+                            <input class="form-control" type="number" min="0" th:max="${book.availableQuantity}"
+                                   th:field="*{lines[__${stat.index}__].quantity}">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Tạo phiếu</button>
+        <a class="btn btn-link" th:href="@{/borrowings}">Hủy</a>
+    </form>
+</main>
+</body>
+</html>

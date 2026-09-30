@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Phiếu mượn')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">Phiếu mượn</h1>
+        <a class="btn btn-primary" th:href="@{/borrowings/new}">Tạo phiếu</a>
+    </div>
+    <form class="row g-2 mb-3" method="get" th:action="@{/borrowings}">
+        <div class="col-md-3">
+            <select class="form-select" name="memberId">
+                <option value="">Tất cả độc giả</option>
+                <option th:each="member : ${members}" th:value="${member.id}" th:text="${member.memberCode + ' - ' + member.fullName}"
+                        th:selected="${memberId != null and memberId == member.id}"></option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="status">
+                <option value="">Tất cả trạng thái</option>
+                <option th:each="item : ${statuses}" th:value="${item}" th:text="${@labels.status(item)}"
+                        th:selected="${status == item}"></option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input class="form-control" type="date" name="from" th:value="${from}">
+        </div>
+        <div class="col-md-2">
+            <input class="form-control" type="date" name="to" th:value="${to}">
+        </div>
+        <div class="col-md-2 form-check ms-2">
+            <input class="form-check-input" type="checkbox" name="overdueOnly" value="true" id="overdueOnly"
+                   th:checked="${overdueOnly}">
+            <label class="form-check-label" for="overdueOnly">Phiếu quá hạn</label>
+        </div>
+        <div class="col-md-1">
+            <button class="btn btn-outline-primary" type="submit">Lọc</button>
+        </div>
+    </form>
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>Mã</th>
+                    <th>Độc giả</th>
+                    <th>Ngày mượn</th>
+                    <th>Hạn trả</th>
+                    <th>Trạng thái</th>
+                    <th>Còn phải thu</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${borrowings.totalElements == 0}">
+                    <td colspan="7" class="text-center text-muted py-4">Không có phiếu mượn.</td>
+                </tr>
+                <tr th:each="item : ${borrowings}">
+                    <td th:text="${item.id}">1</td>
+                    <td th:text="${item.member.fullName}">Tên</td>
+                    <td th:text="${#temporals.format(item.borrowedDate, 'dd/MM/yyyy')}">Ngày</td>
+                    <td th:text="${#temporals.format(item.dueDate, 'dd/MM/yyyy')}">Hạn</td>
+                    <td>
+                        <span class="badge" th:classappend="${@labels.badge(item.status)}" th:text="${@labels.status(item.status)}">TT</span>
+                        <span class="badge text-bg-warning" th:if="${item.status.name() == 'OVERDUE' and item.hasPartialReturn()}">Đã trả một phần</span>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(item.unpaidFineAmount, 1, 'POINT', 0, 'COMMA')} + ' đ'">0</td>
+                    <td class="text-end"><a th:href="@{/borrowings/{id}(id=${item.id})}">Chi tiết</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <nav class="mt-3" th:if="${borrowings.totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${!borrowings.hasPrevious} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/borrowings(memberId=${memberId},status=${status},from=${from},to=${to},overdueOnly=${overdueOnly},page=${borrowings.number - 1})}">Trước</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" th:text="|Trang ${borrowings.number + 1} / ${borrowings.totalPages}|"></span>
+            </li>
+            <li class="page-item" th:classappend="${!borrowings.hasNext} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/borrowings(memberId=${memberId},status=${status},from=${from},to=${to},overdueOnly=${overdueOnly},page=${borrowings.number + 1})}">Sau</a>
+            </li>
+        </ul>
+    </nav>
+</main>
+</body>
+</html>

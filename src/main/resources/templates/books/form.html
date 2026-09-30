@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title=${bookId} == null ? 'Thêm sách' : 'Sửa sách')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3" th:text="${bookId} == null ? 'Thêm sách' : 'Sửa sách'">Sách</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:object="${form}" method="post"
+                  th:action="${bookId} == null ? @{/books} : @{/books/{id}(id=${bookId})}">
+                <div class="mb-3">
+                    <label class="form-label">Tên sách</label>
+                    <input class="form-control" th:field="*{title}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Tác giả</label>
+                    <input class="form-control" th:field="*{author}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">ISBN</label>
+                    <input class="form-control" th:field="*{isbn}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Thể loại</label>
+                    <select class="form-select" th:field="*{categoryId}">
+                        <option value="">-- Chọn thể loại --</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                    </select>
+                    <div class="text-danger small" th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Tổng số lượng</label>
+                    <input class="form-control" type="number" min="1" th:field="*{totalQuantity}">
+                    <div class="text-danger small" th:if="${#fields.hasErrors('totalQuantity')}" th:errors="*{totalQuantity}"></div>
+                </div>
+                <button class="btn btn-primary" type="submit">Lưu</button>
+                <a class="btn btn-link" th:href="@{/books}">Quay lại</a>
+            </form>
+        </div>
+    </div>
+    <div class="card" th:if="${bookId} == null">
+        <div class="card-body">
+            <h2 class="h5">Thêm thể loại</h2>
+            <form th:object="${categoryForm}" method="post" th:action="@{/books/categories}" class="row g-2">
+                <div class="col-md-4">
+                    <input class="form-control" th:field="*{name}" placeholder="Tên thể loại">
+                </div>
+                <div class="col-md-5">
+                    <input class="form-control" th:field="*{description}" placeholder="Mô tả">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-outline-primary" type="submit">Thêm thể loại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>
