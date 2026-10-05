@@ -1,0 +1,13 @@
+---
+description: Chính sách an toàn khi agent sửa repo BT_QLSach
+alwaysApply: true
+---
+
+# Safety
+
+- Không tự ý xóa file.
+- Không commit secret và không đưa `.env` thật vào prompt.
+- Không chạy migration production khi chưa có người duyệt.
+- Không push thẳng `main`/`master` và không tự merge.
+- Auth, thanh toán, miễn giảm phí, xóa dữ liệu cần người duyệt trước khi sửa.
+- Reviewer chỉ comment hoặc đề xuất diff, không tự merge.

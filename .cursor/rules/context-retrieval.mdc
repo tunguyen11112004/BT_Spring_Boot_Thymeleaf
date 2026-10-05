@@ -1,0 +1,15 @@
+---
+description: Lấy context bằng tài liệu .ai và CodeGraph trước khi đọc hoặc sửa code
+alwaysApply: true
+---
+
+# Context retrieval
+
+1. Đọc `.ai/00_project_brief.md` và summary module liên quan trước khi mở source.
+2. Nếu repo đã có `.codegraph/`, dùng CodeGraph (`codegraph_explore`, `projectPath` là root repo) để tìm symbol, flow, impact trước khi Read hoặc Grep hàng loạt.
+3. Chỉ mở file liên quan trực tiếp tới task và file test tương ứng.
+4. Không đưa cả repo, `target/`, log dài, hoặc file secret vào context.
+
+Thứ tự: brief → module summary → CodeGraph (nếu đã index) → đoạn file cần sửa → git diff.
+
+Nghiệp vụ đã chốt nằm ở `docs/BA/BA_Quan_ly_muon_tra_sach.md`. Không suy diễn rule ngoài tài liệu đó.

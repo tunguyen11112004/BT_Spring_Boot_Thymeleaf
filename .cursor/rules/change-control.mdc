@@ -1,0 +1,16 @@
+---
+description: Mọi thay đổi phải có phạm vi, lý do, rủi ro, lệnh test và cách rollback
+alwaysApply: true
+---
+
+# Change control
+
+Trước khi sửa code, viết kế hoạch ngắn. Khi báo kết quả, nêu:
+
+- Files affected
+- Reason
+- Risk
+- Tests required (lệnh cụ thể)
+- Rollback plan
+
+Mỗi thay đổi chỉ xử lý một use case hoặc một nhóm lỗi liên quan. Không refactor ngoài phạm vi task. Thiếu thông tin nghiệp vụ thì ghi Open Questions trong `docs/BA/`, không bịa rule.

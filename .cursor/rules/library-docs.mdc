@@ -1,0 +1,8 @@
+---
+description: Lấy docs đúng phiên bản thư viện qua Context7 khi sinh hoặc sửa code
+alwaysApply: true
+---
+
+# Library docs
+
+Khi cần API, cấu hình, hoặc ví dụ của Spring Boot 3.5, Thymeleaf, Spring Data JPA, Flyway, MySQL connector, hoặc thư viện khác trong `pom.xml`, dùng Context7 MCP để lấy docs đúng phiên bản trước khi viết code.
